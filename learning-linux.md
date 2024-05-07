@@ -34,6 +34,74 @@ We could combine `..` with relative paths to go up one level and then somewhere 
 
 We can combine commands in bash using `;` like so `cd /home/user/Documents; ls -al`
 
+## first steps with linux
+
+We will be getting a basic feel for linux in this section.
+
+### user management basics
+
+There are three main groups of users on linux systems.
+
+#### system accounts
+
+These run services and background tasks on the system - examples are web servers and databases - they do not have a home directory.
+
+#### regular users
+
+These have their own files and directories - they cannot run admin tasks or access other users files unless they are given permission to do so.
+
+#### super user - root
+
+The root user can access anywhere on the file system - this includes all other user directories and files. The super user can perform admin tasks such as adding or deleting users - they can also alter the configuration of the system itself.
+
+### elevation of privileges using sudo
+
+Sometimes we want regular users to have temporary access to super user rights - this where the `sudo` or Super User DO command comes into play.
+
+In order to elevate our privileges on a temporary basis we can use `sudo` before the command we want to execute. An example is `sudo ls /root` - we will be able to access the home directory of the `root` user which we would not normally be able to do.
+
+>[!NOTE]
+>We will need to enter the correct password for the user we are trying to elevate privileges for - this is the regular user password not the root user password
+
+Since `sudo` gives a regular user elevated privileges we need to be careful with the commands we execute using it.
+
+### package management
+
+Package management is implemented on linux systems - it is a centralized way to install and update software.
+
+In order to use package management properly, we first of all get our machine to connect to a remote repository which contains the packages - the packages will be of various versions and their dependencies will also be in the repositories. Our computer downloads all the available packages and we can then install specific software if it is available. The package manager also installs the dependencies which are needed in order for the software we want to work properly - it massively simplifies the process of managing software and updates.
+
+#### updating and installing software on debian systems
+
+Debian based systems use the `aptitude` package manager which is written as `apt`
+
+We first of all need to connect our system to repositories to get the most up to date packages. We need to have elevated privileges to do this so we will use `sudo apt update`
+
+>[!IMPORTANT]
+>We need to update the list of available packages using `sudo apt udpdate` before we do anything else with the package manager
+
+We can now run a *small* upgrade of our system - this means our existing packages are updated including the installation of additional necessary dependencies. The command to use is `sudo apt upgrade`
+
+We can run a *large* upgrade of our system - this means that in addition to updating existing packages and installing additonal dependencies - unnecessary or problematic dependencies will be removed. This will not remove software we have manually installed - it will just remove dependencies which were automatically installed but are no longer needed or need to be replaced with newer ones. The command to use is `sudo apt full-upgrade` which is the same as `sudo apt dist-upgrade`
+
+>[!CAUTION]
+>Full upgrades can potentially mess things up when dependencies are removed - this will not happen if we use a small upgrade
+
+##### installing and removing software
+
+Once we have updated the list of packages from the repositories using `sudo apt update` we can try to install new packages - in this example the `cowsay` program - using `sudo apt install cowsay`
+
+If we want to remove a package we can use `sudo apt remove cowsay`
+
+>[!TIP]
+>If something goes wrong after we have undertaken an `upgrade` or `full-upgrade` we can try using `sudo apt autoremove` to try to fix it by removing packages which are no longer needed
+
+##### apt or apt-get
+
+There is another way to do package management on debian systems - the `apt-get` command. Mostly this is interchangeable with `apt` - for example `sudo apt-get update` will do the same as `sudo apt update`
+
+The main difference is in how the `upgrade` works - with `sudo apt-get upgrade` we are only upgrading installed packages - it will not install dependencies whereas `sudo apt upgrade` installs additional dependencies as well as upgrading installed packages.
+
 ## user management
 
 On a linux system, there are different types of user. There is a *root* user who has the highest privileges and therefore complete control of the system. This user is given the user id of 0. There are *regular* users who do not have the same privs as the root user, but they can be given elevated privs on a temporary basis using the *sudo* command which is explored in more detail later in this section. There are also *service* users. Services have user accounts so we can logically seperate them from the rest of the system. This is a good idea when it comes to security. An example is the `www-data` user account which the `apache2` service runs under. If an attacker compromises the machine via the web-server, they land on the machine as a restriced service user.
